@@ -11,17 +11,17 @@ function CoursesList() {
   }, []);
 
   return (
-    <div>
-      <h1>Courses</h1>
-      {courses.map(course => (
-        <div key={course.id}>
-          <h2>{course.title}</h2>
-          <p>Code: {course.courseCode}</p>
-          <p>Credits: {course.credits}</p>
-        </div>
-      ))}
-    </div>
-  );
+  <div>
+    <h1>Courses</h1>
+    {courses.map(course => (
+      <div key={course.id}>
+        <h2>{course.title}</h2>
+        <p>Code: {course.courseCode}</p>
+      </div>
+    ))}
+  </div>
+);
 }
+
 
 export default CoursesList;
