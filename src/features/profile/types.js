@@ -30,6 +30,13 @@ export const BuddyRole = {
   ACCOUNTABILITY: 'Accountability (Just stay focused)'
 };
 
+// Group Size Preferences
+export const GroupSize = {
+  SMALL: 'Small (2-3)',
+  MEDIUM: 'Medium (6-7)',
+  LARGE: 'Large (10+)'
+};
+
 // Session Type Options
 export const SessionType = {
   PUBLIC: 'Public',

@@ -23,6 +23,7 @@ function App() {
     environmentPreference: '',
     timePreference: '',
     buddyRolePreference: '',
+    groupSizePreference: '',
     availability: '',
     friends: []
   };
