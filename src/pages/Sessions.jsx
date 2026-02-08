@@ -23,7 +23,7 @@ const DEFAULT_SESSIONS = [
 
 export default function Sessions() {
   const [modal, setModal] = useState(false);
-  const { accessToken, googleUser, signInWithGoogle, createGoogleMeetLink } = useGoogleAuth(
+  const { accessToken, signInWithGoogle, createGoogleMeetLink } = useGoogleAuth(
     GOOGLE_CLIENT_ID,
     SCOPES
   );
