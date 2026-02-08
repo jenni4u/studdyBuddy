@@ -6,7 +6,6 @@ import useGoogleAuth from "../hooks/useGoogleAuth";
 import useSessions from "../hooks/useSessions";
 import { createSession } from "../services/sessionApi";
 
-const CURRENT_USER_ID = "user_001";
 const DEFAULT_SESSIONS = [
   {
     id: 1,
@@ -21,14 +20,14 @@ const DEFAULT_SESSIONS = [
   },
 ];
 
-export default function Sessions() {
+export default function Sessions({ userId = "user_001" }) {
   const [modal, setModal] = useState(false);
   const { accessToken, signInWithGoogle, createGoogleMeetLink } = useGoogleAuth(
     GOOGLE_CLIENT_ID,
     SCOPES
   );
   // Use visibility filter to show only public sessions + friends-only sessions from friends
-  const { sessions, setSessions } = useSessions(CURRENT_USER_ID, DEFAULT_SESSIONS, true);
+  const { sessions, setSessions } = useSessions(userId, DEFAULT_SESSIONS, true);
 
   const handlePersistSession = async (sessionToSave) => {
     await createSession(sessionToSave);

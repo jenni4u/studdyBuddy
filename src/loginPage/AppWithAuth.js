@@ -1,39 +1,22 @@
 import React, { useState } from 'react';
-import Sessions from './pages/Sessions';
 import Login from './loginPage/Login';
+import SignUp from './loginPage/SignUp';
+import StudyBuddy from './StudyBuddy';
 import ProfileView from './features/profile/components/ProfileView';
-import FriendsPanel from './components/FriendsPanel';
 
 function App() {
-  const [currentUser, setCurrentUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentAuthPage, setCurrentAuthPage] = useState('login'); // 'login' or 'signup'
   const [currentPage, setCurrentPage] = useState('sessions'); // 'sessions' or 'profile'
-  const [showFriendsPanel, setShowFriendsPanel] = useState(false);
+  const [user, setUser] = useState(null);
 
-  // Handle login
-  const handleLogin = (user) => {
-    setCurrentUser(user);
-    setCurrentPage('sessions');
-  };
-
-  // Handle logout
-  const handleLogout = () => {
-    setCurrentUser(null);
-    setCurrentPage('sessions');
-  };
-
-  // If not logged in, show login page
-  if (!currentUser) {
-    return <Login onLogin={handleLogin} />;
-  }
-
-  // Build user data for ProfileView from logged in user
-  const userData = {
-    id: currentUser.id || 'user_001',
-    name: currentUser.name || 'User',
-    email: currentUser.email || '',
-    avatar: currentUser.avatar || 'https://i.pravatar.cc/300?img=5',
-    major: currentUser.major || 'Computer Science',
-    year: currentUser.year || 'U2',
+  // Sample user data for ProfileView (will be populated after login)
+  const sampleUser = {
+    id: '1',
+    name: user?.name || 'Your Name',
+    avatar: 'https://i.pravatar.cc/300?img=5',
+    major: 'Computer Science',
+    year: 'U2',
     courses: ['COMP 202', 'MATH 240'],
     bio: 'Love studying in coffee shops and helping others learn!',
     studyStyle: '',
@@ -45,22 +28,59 @@ function App() {
     friends: []
   };
 
+  const handleLogin = (userData) => {
+    console.log('User logged in:', userData);
+    setUser(userData);
+    setIsAuthenticated(true);
+    setCurrentPage('sessions'); // Go to sessions page after login
+  };
+
+  const handleSignUp = (userData) => {
+    console.log('User signed up:', userData);
+    setUser(userData);
+    setIsAuthenticated(true);
+    setCurrentPage('sessions'); // Go to sessions page after signup
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setUser(null);
+    setCurrentAuthPage('login');
+  };
+
   const handleSaveProfile = (updatedProfile) => {
     console.log('Profile saved:', updatedProfile);
     // Backend will handle the actual API call
-    alert('Profile saved! (This will go to your backend)');
+    alert('Profile saved! 🎉');
   };
 
+  // Show Login/SignUp pages if not authenticated
+  if (!isAuthenticated) {
+    if (currentAuthPage === 'login') {
+      return (
+        <Login 
+          onLogin={handleLogin}
+          onSwitchToSignup={() => setCurrentAuthPage('signup')}
+        />
+      );
+    } else {
+      return (
+        <SignUp 
+          onSignUp={handleSignUp}
+          onSwitchToLogin={() => setCurrentAuthPage('login')}
+        />
+      );
+    }
+  }
+
+  // Show main app after authentication
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50">
       {/* Navigation Bar */}
       <div className="bg-white shadow-sm p-4 border-b flex justify-between items-center">
-        <div className="flex items-center gap-4">
-          <h1 className="text-2xl font-bold text-indigo-600">StudyBuddy</h1>
-          <span className="text-sm text-slate-500">Welcome, {currentUser.name}</span>
-        </div>
+        <h1 className="text-2xl font-bold text-indigo-600">StudyBuddy</h1>
         
-        <div className="flex gap-3">
+        <div className="flex items-center gap-3">
           <button
             onClick={() => setCurrentPage('sessions')}
             className={`px-4 py-2 rounded-lg font-medium transition-all ${
@@ -71,14 +91,6 @@ function App() {
           >
             <i className="fas fa-calendar-alt mr-2"></i>
             Sessions
-          </button>
-
-          <button
-            onClick={() => setShowFriendsPanel(true)}
-            className="px-4 py-2 rounded-lg font-medium transition-all bg-gray-100 text-gray-700 hover:bg-gray-200"
-          >
-            <i className="fas fa-users mr-2"></i>
-            Friends
           </button>
           
           <button
@@ -95,7 +107,7 @@ function App() {
 
           <button
             onClick={handleLogout}
-            className="px-4 py-2 rounded-lg font-medium transition-all bg-red-50 text-red-600 hover:bg-red-100 border border-red-200"
+            className="px-4 py-2 rounded-lg font-medium bg-red-100 text-red-700 hover:bg-red-200 transition-all"
           >
             <i className="fas fa-sign-out-alt mr-2"></i>
             Logout
@@ -105,16 +117,9 @@ function App() {
 
       {/* Page Content */}
       <div>
-        {currentPage === 'sessions' && <Sessions userId={currentUser.id} />}
-        {currentPage === 'profile' && <ProfileView user={userData} onSave={handleSaveProfile} />}
+        {currentPage === 'sessions' && <StudyBuddy />}
+        {currentPage === 'profile' && <ProfileView user={sampleUser} onSave={handleSaveProfile} />}
       </div>
-
-      {/* Friends Panel Modal */}
-      <FriendsPanel
-        userId={currentUser.id}
-        isOpen={showFriendsPanel}
-        onClose={() => setShowFriendsPanel(false)}
-      />
     </div>
   );
 }
