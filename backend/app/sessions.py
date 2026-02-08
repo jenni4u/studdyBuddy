@@ -29,3 +29,12 @@ async def create_session(session: Session):
         "id": str(result.inserted_id),
         "message": "Session created successfully"
     }
+
+@router.get("/sessions")
+async def get_sessions():
+    sessions = []
+    cursor = db.sessions.find()
+    async for s in cursor:
+        s["_id"] = str(s["_id"]) 
+        sessions.append(Session(**s))
+    return sessions

@@ -1,8 +1,8 @@
 import os
 import pytest
 
-from backend import scoring
-from backend import embeddings
+from backend.app import scoring
+from backend.app import embeddings
 
 
 def test_vector_search_ranks_expected_session(seed_db):

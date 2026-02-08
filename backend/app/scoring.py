@@ -1,5 +1,5 @@
 import os
-from backend import embeddings
+from backend.app import embeddings
 
 VECTOR_INDEX = os.environ.get("VECTOR_INDEX", "vector_index")
 
@@ -164,9 +164,10 @@ def get_similar_users(db, user, k=20):
 
     return list(db.users.aggregate(pipeline))
 
-def match_user(db, user):
+def match_user(db, user_id, k=20):
     # Step 1: get vector-similar sessions (compares in embedded)
-    sessions = get_similar_sessions(db, user, k=20)
+    user = db.users.find_one({"_id": user_id})
+    sessions = get_similar_sessions(db, user, k=k)
 
     results = []
 

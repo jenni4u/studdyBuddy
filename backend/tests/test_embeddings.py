@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from backend import embeddings
+from backend.app import embeddings
 
 
 def test_build_user_embedding_text_includes_defaults_and_availability():

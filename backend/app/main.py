@@ -3,10 +3,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.models import Session
 from app.database import sessions_collection
 from app.store import sessions_cache
+from app.sessions import router as sessions_router
 
 import asyncio
 
 app = FastAPI()
+app.include_router(sessions_router)
 
 # Enable CORS for frontend
 app.add_middleware(

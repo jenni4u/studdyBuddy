@@ -377,16 +377,40 @@ export default function CreateSessionModal({
         ? data.courses.map((course) => course.code).join(", ")
         : "Study";
 
+    const dayFromDate = (dateString) => {
+      if (!dateString) return null;
+      const dayIndex = new Date(`${dateString}T00:00:00`).getDay();
+      const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      return days[dayIndex] || null;
+    };
+
+    const timeBlock = data.timeMode === "scheduled" && data.date && data.start && data.end
+      ? {
+        day: dayFromDate(data.date),
+        start: data.start,
+        end: data.end,
+      }
+      : null;
+
+    const locationLabel = data.type === "online"
+      ? "online"
+      : (data.location?.name || data.location?.address || data.location || "");
+
     const sessionToSave = {
       type: data.type,
       visibility: data.visibility,
       course: courseName,
       note: data.note || "",
+      description: data.note || "",
       when: data.timeMode === "now"
         ? "now"
         : data.timeMode === "scheduled"
           ? `${data.date} ${data.start} - ${data.end}`
           : "flexible",
+      format: data.type === "online" ? "online" : "in-person",
+      location: locationLabel || undefined,
+      time: timeBlock?.day ? timeBlock : undefined,
+      current_members: [],
       max_size: data.maxMembers,
       gender: data.genderPref,
       created_by: "Maria",

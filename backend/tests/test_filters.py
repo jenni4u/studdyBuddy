@@ -1,5 +1,5 @@
-from backend.scoring import filter as session_filter
-from backend.scoring import has_availability_overlap
+from backend.app.scoring import filter as session_filter
+from backend.app.scoring import has_availability_overlap
 
 
 def test_seeded_collections(seed_db):

@@ -2,8 +2,8 @@ import os
 
 import pytest
 
-from backend import embeddings
-from backend.scoring import match_user, score_rule_based
+from backend.app import embeddings
+from backend.app.scoring import match_user, score_rule_based
 
 
 def test_score_rule_based_orders_by_match_quality():
