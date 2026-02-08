@@ -27,7 +27,8 @@ export default function Sessions() {
     GOOGLE_CLIENT_ID,
     SCOPES
   );
-  const { sessions, setSessions } = useSessions(CURRENT_USER_ID, DEFAULT_SESSIONS);
+  // Use visibility filter to show only public sessions + friends-only sessions from friends
+  const { sessions, setSessions } = useSessions(CURRENT_USER_ID, DEFAULT_SESSIONS, true);
 
   const handlePersistSession = async (sessionToSave) => {
     await createSession(sessionToSave);

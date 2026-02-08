@@ -2,17 +2,13 @@ import React, { useState } from 'react';
 import { StudyStyle, StudyEnvironment, TimePreference, BuddyRole } from '../types';
 import AvatarUpload from './AvatarUpload';
 import ChipSelector from './ChipSelector';
-import EmailFields from './EmailFields';
-import ScheduleUpload from './ScheduleUpload';
 import AvailabilityPicker from './AvailabilityPicker';
 
 const ProfileView = ({ user, onSave }) => {
   const [profile, setProfile] = useState(user);
   const [isSaving, setIsSaving] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState(user.avatar);
-  const [scheduleFile, setScheduleFile] = useState(null);
-  const [personalEmail, setPersonalEmail] = useState('');
-  const [schoolEmail, setSchoolEmail] = useState('');
+  const [email, setEmail] = useState(user.email || '');
   
   const [availability, setAvailability] = useState({
     Monday: {},
@@ -27,18 +23,16 @@ const ProfileView = ({ user, onSave }) => {
   // Calculate profile completion percentage
   const calculateCompletion = () => {
     let completed = 0;
-    const total = 10;
+    const total = 8;
 
     if (profile.name) completed++;
     if (profile.major) completed++;
     if (profile.year) completed++;
-    if (personalEmail) completed++;
-    if (schoolEmail && schoolEmail.includes('@mail.mcgill.ca')) completed++;
+    if (email) completed++;
     if (profile.bio && profile.bio.length > 20) completed++;
     if (profile.studyStyle) completed++;
     if (profile.environmentPreference) completed++;
     if (profile.timePreference) completed++;
-    if (profile.buddyRolePreference) completed++;
 
     return Math.round((completed / total) * 100);
   };
@@ -46,8 +40,8 @@ const ProfileView = ({ user, onSave }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    if (!schoolEmail.includes('@mail.mcgill.ca')) {
-      alert('Please use your McGill email (@mail.mcgill.ca)');
+    if (!email) {
+      alert('Please enter your email');
       return;
     }
 
@@ -57,25 +51,13 @@ const ProfileView = ({ user, onSave }) => {
       const updatedProfile = {
         ...profile,
         avatar: avatarPreview,
+        email: email,
       };
       
       onSave(updatedProfile);
       setIsSaving(false);
       alert('Profile updated successfully! 🎉');
     }, 800);
-  };
-
-  const handleScheduleUpload = (file) => {
-    setScheduleFile(file);
-    alert(`Schedule uploaded: ${file.name}\n\n📚 Your backend will extract courses from this file!`);
-  };
-
-  const handleAddCourse = (course) => {
-    setProfile({...profile, courses: [...(profile.courses || []), course]});
-  };
-
-  const handleRemoveCourse = (index) => {
-    setProfile({...profile, courses: profile.courses.filter((_, idx) => idx !== index)});
   };
 
   const toggleAvailability = (day, hour) => {
@@ -95,7 +77,7 @@ const ProfileView = ({ user, onSave }) => {
       {/* Header */}
       <div className="flex justify-between items-end mb-8">
         <div>
-          <h2 className="text-3xl font-black text-slate-900">Your Study DNA</h2>
+          <h2 className="text-3xl font-black text-slate-900">Your Study Profile</h2>
           <p className="text-slate-500">How you study determines who you match with.</p>
         </div>
         <div className="hidden sm:block">
@@ -189,12 +171,17 @@ const ProfileView = ({ user, onSave }) => {
               </div>
             </div>
 
-            <EmailFields 
-              personalEmail={personalEmail}
-              schoolEmail={schoolEmail}
-              onPersonalEmailChange={setPersonalEmail}
-              onSchoolEmailChange={setSchoolEmail}
-            />
+            <div>
+              <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Email *</label>
+              <input
+                type="email"
+                required
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-sm"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="your.email@example.com"
+              />
+            </div>
 
             <div>
               <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Professional Bio</label>
@@ -208,15 +195,6 @@ const ProfileView = ({ user, onSave }) => {
               <p className="text-xs text-slate-400 mt-1">{profile.bio?.length || 0} / 500 characters</p>
             </div>
           </div>
-
-          {/* Schedule Upload */}
-          <ScheduleUpload 
-            scheduleFile={scheduleFile}
-            courses={profile.courses}
-            onScheduleUpload={handleScheduleUpload}
-            onAddCourse={handleAddCourse}
-            onRemoveCourse={handleRemoveCourse}
-          />
 
           {/* Study Preferences */}
           <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm space-y-8">

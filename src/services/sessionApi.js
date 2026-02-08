@@ -14,3 +14,71 @@ export const createSession = async (session) => {
   const response = await axios.post(`${API_BASE_URL}/sessions`, session);
   return response.data;
 };
+
+export const fetchVisibleSessions = async (userId) => {
+  const response = await axios.get(`${API_BASE_URL}/sessions/visible/${userId}`);
+  return response.data;
+};
+
+// ==================== USER API ====================
+
+export const getUser = async (userId) => {
+  const response = await axios.get(`${API_BASE_URL}/users/${userId}`);
+  return response.data;
+};
+
+export const createUser = async (user) => {
+  const response = await axios.post(`${API_BASE_URL}/users`, user);
+  return response.data;
+};
+
+export const updateUser = async (userId, user) => {
+  const response = await axios.put(`${API_BASE_URL}/users/${userId}`, user);
+  return response.data;
+};
+
+// ==================== FRIENDS API ====================
+
+export const getFriends = async (userId) => {
+  const response = await axios.get(`${API_BASE_URL}/users/${userId}/friends`);
+  return response.data;
+};
+
+export const getFriendRequests = async (userId) => {
+  const response = await axios.get(`${API_BASE_URL}/users/${userId}/friend-requests`);
+  return response.data;
+};
+
+export const sendFriendRequest = async (fromUserId, toUserId) => {
+  const response = await axios.post(`${API_BASE_URL}/friends/request`, {
+    from_user_id: fromUserId,
+    to_user_id: toUserId,
+  });
+  return response.data;
+};
+
+export const acceptFriendRequest = async (fromUserId, toUserId) => {
+  const response = await axios.post(`${API_BASE_URL}/friends/accept`, {
+    from_user_id: fromUserId,
+    to_user_id: toUserId,
+  });
+  return response.data;
+};
+
+export const rejectFriendRequest = async (fromUserId, toUserId) => {
+  const response = await axios.post(`${API_BASE_URL}/friends/reject`, {
+    from_user_id: fromUserId,
+    to_user_id: toUserId,
+  });
+  return response.data;
+};
+
+export const removeFriend = async (userId, friendId) => {
+  const response = await axios.delete(`${API_BASE_URL}/friends/${userId}/${friendId}`);
+  return response.data;
+};
+
+export const searchUsers = async (query, currentUserId) => {
+  const response = await axios.get(`${API_BASE_URL}/users/search/${query}?current_user_id=${currentUserId}`);
+  return response.data;
+};

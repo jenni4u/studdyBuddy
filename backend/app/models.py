@@ -7,6 +7,23 @@ class TimeSlot(BaseModel):
     start: str
     end: str
 
+
+class User(BaseModel):
+    id: str
+    name: str
+    email: str
+    avatar: Optional[str] = None
+    courses: List[str] = []
+    friends: List[str] = []  # List of user IDs
+    friend_requests_sent: List[str] = []  # Pending outgoing requests
+    friend_requests_received: List[str] = []  # Pending incoming requests
+
+
+class FriendRequest(BaseModel):
+    from_user_id: str
+    to_user_id: str
+
+
 class Session(BaseModel):
     # API-created fields (optional for DB-seeded sessions)
     type: Optional[str] = None

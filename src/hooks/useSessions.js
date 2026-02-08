@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { fetchMatchedSessions } from "../services/sessionApi";
+import { fetchMatchedSessions, fetchVisibleSessions } from "../services/sessionApi";
 
 const mapSession = (session) => ({
   id: session._id || Date.now(),
@@ -15,16 +15,20 @@ const mapSession = (session) => ({
   meetLink: session.meetLink || null,
   genderPref: session.gender || "any",
   isLive: session.when === "now",
+  visibility: session.visibility || "public",
 });
 
-export default function useSessions(userId, initialSessions = []) {
+export default function useSessions(userId, initialSessions = [], useVisibilityFilter = false) {
   const [sessions, setSessions] = useState(initialSessions);
   const [error, setError] = useState(null);
 
   const refreshSessions = useCallback(async () => {
     if (!userId) return;
     try {
-      const data = await fetchMatchedSessions(userId);
+      // Use visibility-filtered endpoint when friends feature is needed
+      const data = useVisibilityFilter 
+        ? await fetchVisibleSessions(userId)
+        : await fetchMatchedSessions(userId);
       if (data?.error) {
         setError(data.error);
         setSessions([]);
@@ -36,7 +40,7 @@ export default function useSessions(userId, initialSessions = []) {
     } catch (err) {
       setError(err);
     }
-  }, [userId]);
+  }, [userId, useVisibilityFilter]);
 
   useEffect(() => {
     refreshSessions();

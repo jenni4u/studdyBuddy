@@ -1,13 +1,18 @@
 import React, { useState } from 'react';
 import Sessions from './pages/Sessions';
 import ProfileView from './features/profile/components/ProfileView';
+import FriendsPanel from './components/FriendsPanel';
+
+// This should come from authentication in production
+const CURRENT_USER_ID = "user_001";
 
 function App() {
   const [currentPage, setCurrentPage] = useState('sessions'); // 'sessions' or 'profile'
+  const [showFriendsPanel, setShowFriendsPanel] = useState(false);
 
   // Sample user data for ProfileView
   const sampleUser = {
-    id: '1',
+    id: CURRENT_USER_ID,
     name: 'Sarah Chen',
     avatar: 'https://i.pravatar.cc/300?img=5',
     major: 'Computer Science',
@@ -46,6 +51,14 @@ function App() {
             <i className="fas fa-calendar-alt mr-2"></i>
             Sessions
           </button>
+
+          <button
+            onClick={() => setShowFriendsPanel(true)}
+            className="px-4 py-2 rounded-lg font-medium transition-all bg-gray-100 text-gray-700 hover:bg-gray-200"
+          >
+            <i className="fas fa-users mr-2"></i>
+            Friends
+          </button>
           
           <button
             onClick={() => setCurrentPage('profile')}
@@ -66,6 +79,13 @@ function App() {
         {currentPage === 'sessions' && <Sessions />}
         {currentPage === 'profile' && <ProfileView user={sampleUser} onSave={handleSaveProfile} />}
       </div>
+
+      {/* Friends Panel Modal */}
+      <FriendsPanel
+        userId={CURRENT_USER_ID}
+        isOpen={showFriendsPanel}
+        onClose={() => setShowFriendsPanel(false)}
+      />
     </div>
   );
 }
