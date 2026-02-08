@@ -118,7 +118,7 @@ export default function StudyBuddy() {
   };
 
   // Geolocation — only set location if user grants permission
-  const requestLocation = () => {
+  const requestLocation = useCallback(() => {
     return new Promise((resolve) => {
       if (!navigator.geolocation) { resolve(false); return; }
       navigator.geolocation.getCurrentPosition(
@@ -126,16 +126,16 @@ export default function StudyBuddy() {
         () => { setLocationGranted(false); resolve(false); }
       );
     });
-  };
+  }, []);
 
   // Try requesting on mount silently
-  useEffect(() => { requestLocation(); }, []);
+  useEffect(() => { requestLocation(); }, [requestLocation]);
 
-  const calculateDistance = (lat1, lng1, lat2, lng2) => {
+  const calculateDistance = useCallback((lat1, lng1, lat2, lng2) => {
     const R = 6371, dLat = (lat2-lat1)*Math.PI/180, dLng = (lng2-lng1)*Math.PI/180;
     const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
     return (R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))).toFixed(1);
-  };
+  }, []);
 
   const placeSelectionPin = useCallback((place) => {
     if (!googleMapRef.current || !window.google?.maps) return;
