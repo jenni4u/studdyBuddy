@@ -70,6 +70,8 @@ export default function StudyBuddy() {
   const [accessToken, setAccessToken] = useState(null);
   const tokenClientRef = useRef(null);
   const placesLoadedRef = useRef(false);
+  const [locationGranted, setLocationGranted] = useState(false);
+  const [showLocationPopup, setShowLocationPopup] = useState(false);
 
   // Load Google Identity Services
   useEffect(() => {
@@ -115,15 +117,19 @@ export default function StudyBuddy() {
     } catch { return null; }
   };
 
-  // Geolocation
-  useEffect(() => {
-    if (navigator.geolocation) {
+  // Geolocation — only set location if user grants permission
+  const requestLocation = () => {
+    return new Promise((resolve) => {
+      if (!navigator.geolocation) { resolve(false); return; }
       navigator.geolocation.getCurrentPosition(
-        p => setUserLocation({ lat: p.coords.latitude, lng: p.coords.longitude }),
-        () => setUserLocation({ lat: 45.5048, lng: -73.5772 })
+        p => { setUserLocation({ lat: p.coords.latitude, lng: p.coords.longitude }); setLocationGranted(true); resolve(true); },
+        () => { setLocationGranted(false); resolve(false); }
       );
-    } else setUserLocation({ lat: 45.5048, lng: -73.5772 });
-  }, []);
+    });
+  };
+
+  // Try requesting on mount silently
+  useEffect(() => { requestLocation(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Map init
   useEffect(() => {
@@ -142,7 +148,7 @@ export default function StudyBuddy() {
         fetchNearbyPlaces(map);
       }
     }
-  }, [showMap, mapLoaded, userLocation]);
+  }, [showMap, mapLoaded, userLocation]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const placeSelectionPin = (place) => {
     if (!googleMapRef.current || !window.google?.maps) return;
@@ -270,6 +276,17 @@ export default function StudyBuddy() {
   };
 
   const joinSession = s => { if (s.meetLink) window.open(s.meetLink, '_blank'); else alert(`Joining ${s.name} at ${s.location}!`); };
+
+  const openNearbySpots = async () => {
+    setData(d => ({...d, locType: 'spot'}));
+    if (locationGranted && userLocation) {
+      setShowMap(true);
+    } else {
+      const granted = await requestLocation();
+      if (granted) { setShowMap(true); }
+      else { setShowLocationPopup(true); }
+    }
+  };
 
   const selectPlaceFromMap = place => {
     setData({...data, location: place}); setShowMap(false); setSelectedPlace(null); setShowHoursPanel(false);
@@ -426,7 +443,7 @@ export default function StudyBuddy() {
                         <p className="text-gray-600 mb-4">Where do you want to study?</p>
                         <div className="grid grid-cols-2 gap-3">
                           {[{type:'spot',label:'Nearby Spots',icon:'🗺️'},{type:'building',label:'McGill Building',icon:'🏛️'}].map(({type,label,icon}) => (
-                            <button key={type} onClick={() => { setData({...data, locType: type}); if (type==='spot') setShowMap(true); }}
+                            <button key={type} onClick={() => { if (type==='spot') openNearbySpots(); else setData({...data, locType: type}); }}
                               className={`p-4 rounded-xl border-2 ${data.locType===type?'border-indigo-600 bg-indigo-50':'border-gray-200'}`}>
                               <div className="text-3xl mb-2">{icon}</div><div className="text-sm font-medium">{label}</div>
                             </button>
@@ -459,7 +476,7 @@ export default function StudyBuddy() {
                               <p className="text-sm text-indigo-700 mt-1">{data.location.address}</p>
                               <p className="text-sm text-indigo-600 mt-1">📍 {data.location.distance} km away</p>
                             </div>
-                            <button onClick={() => setShowMap(true)} className="px-3 py-1 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700">Change</button>
+                            <button onClick={openNearbySpots} className="px-3 py-1 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700">Change</button>
                           </div>
                         </div>
                       )}
@@ -664,6 +681,39 @@ export default function StudyBuddy() {
                 {selectedPlace && <button onClick={() => selectPlaceFromMap(selectedPlace)} className="px-6 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700">Select Location</button>}
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Location permission popup */}
+      {showLocationPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[60]">
+          <div className="bg-white rounded-2xl max-w-sm w-full p-6 text-center shadow-2xl">
+            <div className="text-5xl mb-4">📍</div>
+            <h3 className="text-lg font-bold mb-2">Location Access Required</h3>
+            <p className="text-gray-600 text-sm mb-2">
+              To find nearby study spots, StudyBuddy needs access to your location.
+            </p>
+            <p className="text-gray-500 text-xs mb-6">
+              Please enable location access in your browser settings and try again.
+            </p>
+            <div className="space-y-2">
+              <button
+                onClick={async () => {
+                  const granted = await requestLocation();
+                  if (granted) { setShowLocationPopup(false); setShowMap(true); }
+                }}
+                className="w-full px-4 py-3 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700"
+              >
+                Try Again
+              </button>
+              <button
+                onClick={() => setShowLocationPopup(false)}
+                className="w-full px-4 py-3 text-gray-600 font-medium hover:bg-gray-100 rounded-xl"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}
