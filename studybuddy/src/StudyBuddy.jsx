@@ -45,13 +45,13 @@ const FALLBACK_PLACES = [
 ];
 
 export default function StudyBuddy() {
-const [sessionType, setSessionType] = useState("online");
-const [visibility, setVisibility] = useState("public");
-const [selectedCourse, setSelectedCourse] = useState("");
-const [note, setNote] = useState("");
-const [whenValue, setWhenValue] = useState("now");
-const [maxSize, setMaxSize] = useState(5);
-const [gender, setGender] = useState("any");
+// const [sessionType, setSessionType] = useState("online");
+// const [visibility, setVisibility] = useState("public");
+// const [selectedCourse, setSelectedCourse] = useState("");
+// const [note, setNote] = useState("");
+// const [whenValue, setWhenValue] = useState("now");
+// const [maxSize, setMaxSize] = useState(5);
+// const [gender, setGender] = useState("any");
 
   const [modal, setModal] = useState(false);
   const [step, setStep] = useState(1);
