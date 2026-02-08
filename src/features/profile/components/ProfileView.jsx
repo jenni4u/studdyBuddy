@@ -4,7 +4,7 @@ import AvatarUpload from './AvatarUpload';
 import ChipSelector from './ChipSelector';
 import EmailFields from './EmailFields';
 import ScheduleUpload from './ScheduleUpload';
-import AvailabilityGrid from './AvailabilityGrid';
+import AvailabilityPicker from './AvailabilityPicker';
 
 const ProfileView = ({ user, onSave }) => {
   const [profile, setProfile] = useState(user);
@@ -268,7 +268,7 @@ const ProfileView = ({ user, onSave }) => {
           </div>
 
           {/* Weekly Availability */}
-          <AvailabilityGrid 
+          <AvailabilityPicker 
             availability={availability}
             onToggleAvailability={toggleAvailability}
           />
