@@ -1,8 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from models import Session
-from database import sessions_collection
-from store import sessions_cache
+from app.models import Session
+from app.database import sessions_collection
+from app.store import sessions_cache
 
 import asyncio
 
@@ -48,6 +48,11 @@ async def get_sessions():
 
 @app.post("/sessions")
 async def create_session(session: Session):
+    required_fields = ["type", "visibility", "when", "gender", "created_by"]
+    missing = [field for field in required_fields if not getattr(session, field)]
+    if missing:
+        raise HTTPException(status_code=422, detail=f"Missing required fields: {', '.join(missing)}")
+
     session_dict = session.dict()
     result = await sessions_collection.insert_one(session_dict)
     session_dict["_id"] = str(result.inserted_id)

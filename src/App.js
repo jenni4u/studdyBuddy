@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import StudyBuddy from './StudyBuddy';
-import ProfileView from './personalProfile/components/ProfileView';
+import Sessions from './pages/Sessions';
+import ProfileView from './features/profile/components/ProfileView';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('sessions'); // 'sessions' or 'profile'
@@ -63,7 +63,7 @@ function App() {
 
       {/* Page Content */}
       <div>
-        {currentPage === 'sessions' && <StudyBuddy />}
+        {currentPage === 'sessions' && <Sessions />}
         {currentPage === 'profile' && <ProfileView user={sampleUser} onSave={handleSaveProfile} />}
       </div>
     </div>
