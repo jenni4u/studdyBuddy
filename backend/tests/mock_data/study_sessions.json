@@ -1,0 +1,12 @@
+[
+	{
+		"_id": "session_embed_001",
+		"course": "COMP 202",
+		"location": "main library",
+		"style": "quiet",
+		"format": "in-person",
+		"description": "Exam prep",
+		"current_members": [],
+		"max_size": 4
+	}
+]

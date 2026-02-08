@@ -1,0 +1,190 @@
+[
+	{
+		"_id": "session_001",
+		"course": "COMP 202",
+		"location": "main library room 204",
+		"style": "quiet",
+		"format": "in-person",
+		"description": "Focus on recursion practice and problem sets.",
+		"time": {"day": "Mon", "start": "10:00", "end": "12:00"},
+		"current_members": ["user_001"],
+		"max_size": 4
+	},
+	{
+		"_id": "session_002",
+		"course": "COMP 250",
+		"location": "engineering building 3rd floor",
+		"style": "collaborative",
+		"format": "in-person",
+		"description": "Weekly lab prep and algorithm walkthroughs.",
+		"time": {"day": "Tue", "start": "18:00", "end": "20:00"},
+		"current_members": ["user_003"],
+		"max_size": 5
+	},
+	{
+		"_id": "session_003",
+		"course": "MATH 240",
+		"location": "science library",
+		"style": "quiet",
+		"format": "in-person",
+		"description": "Linear algebra practice and proof review.",
+		"time": {"day": "Wed", "start": "09:00", "end": "11:00"},
+		"current_members": ["user_004"],
+		"max_size": 3
+	},
+	{
+		"_id": "session_004",
+		"course": "PHYS 101",
+		"location": "online",
+		"style": "collaborative",
+		"format": "online",
+		"description": "Problem sets and concept review over Zoom.",
+		"time": {"day": "Mon", "start": "19:00", "end": "21:00"},
+		"current_members": ["user_006"],
+		"max_size": 6
+	},
+	{
+		"_id": "session_005",
+		"course": "COMP 206",
+		"location": "computer lab 2",
+		"style": "quiet",
+		"format": "in-person",
+		"description": "Python assignments, debugging, and office hour prep.",
+		"time": {"day": "Fri", "start": "13:00", "end": "15:00"},
+		"current_members": ["user_003"],
+		"max_size": 4
+	},
+	{
+		"_id": "session_006",
+		"course": "ECON 209",
+		"location": "cafe",
+		"style": "collaborative",
+		"format": "in-person",
+		"description": "Case study discussion and practice quizzes.",
+		"time": {"day": "Fri", "start": "15:00", "end": "17:00"},
+		"current_members": ["user_005"],
+		"max_size": 4
+	},
+	{
+		"_id": "session_007",
+		"course": "CHEM 110",
+		"location": "online",
+		"style": "quiet",
+		"format": "online",
+		"description": "Stoichiometry drills and lab report review.",
+		"time": {"day": "Thu", "start": "19:00", "end": "21:00"},
+		"current_members": ["user_006"],
+		"max_size": 5
+	},
+	{
+		"_id": "session_008",
+		"course": "COMP 202",
+		"location": "online",
+		"style": "collaborative",
+		"format": "online",
+		"description": "Exam prep with shared notes and practice tests.",
+		"time": {"day": "Thu", "start": "18:00", "end": "20:00"},
+		"current_members": ["user_002"],
+		"max_size": 6
+	},
+	{
+        "_id": "session_open_001",
+        "course": "COMP 202",
+        "location": "main library room 204",
+        "style": "quiet",
+        "format": "in-person",
+        "description": "Open session.",
+        "time": {"day": "Mon", "start": "10:00", "end": "12:00"},
+        "current_members": ["user_001"],
+        "max_size": 2
+    },
+	{
+        "_id": "session_full_001",
+        "course": "COMP 202",
+        "location": "main library room 204",
+        "style": "quiet",
+        "format": "in-person",
+        "description": "Full session.",
+        "time": {"day": "Mon", "start": "10:00", "end": "12:00"},
+        "current_members": ["user_001", "user_002"],
+        "max_size": 2
+	},
+	{
+		"_id": "session_vec_a",
+		"course": "COMP 202",
+		"location": "main library",
+		"style": "quiet",
+		"format": "in-person",
+		"description": "Quiet, library, solo study.",
+		"current_members": [],
+		"max_size": 4
+	},
+	{
+		"_id": "session_vec_b",
+		"course": "COMP 202",
+		"location": "cafe",
+		"style": "collaborative",
+		"format": "in-person",
+		"description": "Collaborative, cafe, group work.",
+		"current_members": [],
+		"max_size": 4
+	},
+	{
+		"_id": "session_vec_c",
+		"course": "COMP 202",
+		"location": "online",
+		"style": "casual",
+		"format": "online",
+		"description": "Online, flexible, casual study.",
+		"current_members": [],
+		"max_size": 4
+	},
+	{
+		"_id": "session_pipe_a",
+		"course": "COMP 202",
+		"location": "main library",
+		"style": "quiet",
+		"format": "in-person",
+		"description": "Quiet, library, solo study.",
+		"time": {"day": "Mon", "start": "10:30", "end": "11:30"},
+		"current_members": [],
+		"max_size": 4,
+		"group_size_preference": "small"
+	},
+	{
+		"_id": "session_pipe_b",
+		"course": "COMP 202",
+		"location": "cafe",
+		"style": "quiet",
+		"format": "in-person",
+		"description": "Quiet, cafe, focused study.",
+		"time": {"day": "Mon", "start": "10:30", "end": "11:30"},
+		"current_members": ["user_201"],
+		"max_size": 4,
+		"group_size_preference": "large"
+	},
+	{
+		"_id": "session_pipe_c",
+		"course": "COMP 202",
+		"location": "main library",
+		"style": "collaborative",
+		"format": "online",
+		"description": "Collaborative, library-themed group study.",
+		"time": {"day": "Mon", "start": "10:30", "end": "11:30"},
+		"current_members": ["user_202"],
+		"max_size": 4,
+		"group_size_preference": "large"
+	},
+	{
+		"_id": "session_pipe_d",
+		"course": "HIST 101",
+		"location": "main library",
+		"style": "quiet",
+		"format": "in-person",
+		"description": "Quiet library study for history.",
+		"time": {"day": "Mon", "start": "10:30", "end": "11:30"},
+		"current_members": ["user_301", "user_302"],
+		"max_size": 2,
+		"group_size_preference": "small"
+	}
+]

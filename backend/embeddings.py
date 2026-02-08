@@ -1,36 +1,58 @@
+import os
+from pathlib import Path
+
 import google.generativeai as genai
 
+ENV_PATH = Path(__file__).resolve().parent / ".env"
+
+def _load_env_file(path):
+    if not path.exists():
+        return
+    for line in path.read_text().splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+        if key and key not in os.environ:
+            os.environ[key] = value
+
+_load_env_file(ENV_PATH)
+
 # configure API key and initialize embedding model
-genai.configure(api_key="AIzaSyA-TklRWXsA_mHy5KgUoZHE4S0DZvY_fpE")
-embedding_model = genai.GenerativeModel("models/embedding-001")
+api_key = os.environ.get("GEMINI_API_KEY")
+if not api_key:
+    raise ValueError("GEMINI_API_KEY is not set")
+genai.configure(api_key=api_key)
+embedding_model = genai.GenerativeModel("embedding-001")
 
 def build_user_embedding_text(user: dict) -> str:
     prefs = user.get("preferences", {})
-    
-    lines = [
-        f"Study style: {prefs.get('style', 'not specified')}",
-        f"Preferred location: {prefs.get('location', 'not specified')}",
-        f"Format preference: {prefs.get('format', 'either')}",
-        f"Learning style: {user.get('learning_style', 'not specified')}",
-        f"Courses: {', '.join(user.get('courses', []))}",
-    ]
 
-    # Optional: summarize availability into a human-friendly sentence
-    # TODO: figure it out and see what else to add
-    availability = user.get("availability", [])
-    if availability:
-        days = ", ".join([slot['day'] for slot in availability])
-        lines.append(f"Available on: {days}")
+    study_style = prefs.get("style", "")
+    location = prefs.get("location", "")
+    format = prefs.get("format", "")
 
-    return "\n".join(lines)
+    parts = []
+    if study_style:
+        parts.append(f"{study_style} style")
+    if location:
+        parts.append(f"{location} location")
+    if format:
+        parts.append(f"{format} format")
+    prefs_text = ", ".join(parts)
+
+    return prefs_text
 
 def build_session_embedding_text(session):
     lines = [
-        f"Course: {session['course']}",
-        f"Location: {session['location']}",
-        f"Study style: {session.get('style', 'quiet')}",
-        f"Format: {session.get('format', 'in-person')}",
-        f"Description: {session.get('description', '')}"
+        f"{session['location']} location",
+        f"{session.get('style', 'quiet')} style",
+        f"{session.get('format', 'in-person')} format",
+        f"{session.get('description', '')}"
     ]
     return "\n".join(lines)
 

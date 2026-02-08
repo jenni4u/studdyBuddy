@@ -1,0 +1,106 @@
+[
+	{
+		"_id": "user_001",
+		"name": "Alex Kim",
+		"email": "alex.kim@example.com",
+		"courses": ["COMP 202", "MATH 240"],
+		"preferences": {
+			"location": "library",
+			"style": "quiet",
+			"time": "morning"
+		},
+		"availability": [
+			{"day": "Mon", "start": "10:00", "end": "12:00"},
+			{"day": "Wed", "start": "14:00", "end": "16:00"}
+		]
+	},
+	{
+		"_id": "user_002",
+		"name": "Priya Patel",
+		"email": "priya.patel@example.com",
+		"courses": ["COMP 202", "COMP 250"],
+		"preferences": {
+			"location": "online",
+			"style": "collaborative",
+			"time": "evening"
+		},
+		"availability": [
+			{"day": "Tue", "start": "18:00", "end": "20:00"},
+			{"day": "Thu", "start": "18:00", "end": "20:00"}
+		]
+	},
+	{
+		"_id": "user_003",
+		"name": "Miguel Santos",
+		"email": "miguel.santos@example.com",
+		"courses": ["COMP 250", "COMP 206"],
+		"preferences": {
+			"location": "engineering building",
+			"style": "quiet",
+			"time": "morning"
+		},
+		"availability": [
+			{"day": "Mon", "start": "09:00", "end": "11:00"},
+			{"day": "Fri", "start": "13:00", "end": "15:00"}
+		]
+	},
+	{
+		"_id": "user_004",
+		"name": "Sara Nguyen",
+		"email": "sara.nguyen@example.com",
+		"courses": ["MATH 240", "PHYS 101"],
+		"preferences": {
+			"location": "science library",
+			"style": "quiet",
+			"time": "morning"
+		},
+		"availability": [
+			{"day": "Wed", "start": "09:00", "end": "11:00"},
+			{"day": "Thu", "start": "12:00", "end": "14:00"}
+		]
+	},
+	{
+		"_id": "user_005",
+		"name": "Jordan Lee",
+		"email": "jordan.lee@example.com",
+		"courses": ["ECON 209", "COMP 202"],
+		"preferences": {
+			"location": "cafe",
+			"style": "collaborative",
+			"time": "afternoon"
+		},
+		"availability": [
+			{"day": "Tue", "start": "10:00", "end": "12:00"},
+			{"day": "Fri", "start": "15:00", "end": "17:00"}
+		]
+	},
+	{
+		"_id": "user_006",
+		"name": "Lina Chen",
+		"email": "lina.chen@example.com",
+		"courses": ["PHYS 101", "CHEM 110"],
+		"preferences": {
+			"location": "online",
+			"style": "collaborative",
+			"time": "evening"
+		},
+		"availability": [
+			{"day": "Mon", "start": "19:00", "end": "21:00"},
+			{"day": "Thu", "start": "19:00", "end": "21:00"}
+		]
+	},
+	{
+		"_id": "user_vec_001",
+		"name": "Taylor Morgan",
+		"email": "taylor.morgan@example.com",
+		"courses": ["COMP 202"],
+		"preferences": {
+			"location": "library",
+			"style": "quiet",
+			"time": "evening"
+		},
+		"availability": [
+			{"day": "Mon", "start": "10:00", "end": "12:00"}
+		]
+	}
+]
