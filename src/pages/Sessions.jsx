@@ -22,7 +22,7 @@ const DEFAULT_SESSIONS = [
   },
 ];
 
-export default function StudyBuddy() {
+export default function Sessions() {
   const [modal, setModal] = useState(false);
   const { accessToken, googleUser, signInWithGoogle, createGoogleMeetLink } = useGoogleAuth(
     GOOGLE_CLIENT_ID,
