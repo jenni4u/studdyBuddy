@@ -36,9 +36,9 @@ const mapSession = (session) => {
   return {
     id: session._id || session.id || Date.now(),
     course: courseLabel,
-    name: resolveDisplayName(session, courseLabel),
-    location: resolveLocation(session),
-    time: resolveWhen(session),
+    name: courseLabel ==="Study Session" ? "Study Session" : courseLabel,
+    location: session.type === "online" ? "Online" : resolveLocation(session),
+    time: session.when ? resolveWhen(session) : "TBD",
     maxMembers: session.max_size || session.maxMembers || 5,
     organizer: session.created_by || "Unknown",
     meetLink: session.meetLink || null,

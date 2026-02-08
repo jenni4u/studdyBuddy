@@ -14,7 +14,7 @@ export default function SessionCard({ session, onJoin }) {
       </div>
       <p className="text-sm text-gray-600">📍 {session.location}</p>
       <p className="text-sm text-gray-600">🕐 {session.time}</p>
-      <p className="text-sm text-gray-600">👥 {session.members}/{session.maxMembers} members</p>
+      <p className="text-sm text-gray-600">👥 {session.maxMembers} members</p>
       {session.genderPref !== "any" && (
         <p className="text-sm text-gray-600">⚧ {session.genderPref} preferred</p>
       )}

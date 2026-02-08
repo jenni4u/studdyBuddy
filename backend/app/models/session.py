@@ -17,7 +17,7 @@ class Session(BaseModel):
     style: Optional[str] = None
     format: Optional[str] = None
     description: Optional[str] = None
-    time: Optional[TimeSlot] = None
+    time: Optional[str] = None
     current_members: Optional[List[str]] = None
     group_size_preference: Optional[str] = None
     embedding: Optional[List[float]] = None
