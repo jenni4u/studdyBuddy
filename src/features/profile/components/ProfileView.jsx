@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { StudyStyle, StudyEnvironment, TimePreference, BuddyRole } from '../types';
+import { StudyStyle, StudyEnvironment, TimePreference, BuddyRole, GroupSize } from '../types';
 import AvatarUpload from './AvatarUpload';
 import ChipSelector from './ChipSelector';
 import EmailFields from './EmailFields';
 import ScheduleUpload from './ScheduleUpload';
-import AvailabilityPicker from './AvailabilityPicker';
+import AvailabilityGrid from './AvailabilityGrid';
 
 const ProfileView = ({ user, onSave }) => {
   const [profile, setProfile] = useState(user);
@@ -27,7 +27,7 @@ const ProfileView = ({ user, onSave }) => {
   // Calculate profile completion percentage
   const calculateCompletion = () => {
     let completed = 0;
-    const total = 10;
+    const total = 11; // Updated from 10 to 11
 
     if (profile.name) completed++;
     if (profile.major) completed++;
@@ -39,6 +39,7 @@ const ProfileView = ({ user, onSave }) => {
     if (profile.environmentPreference) completed++;
     if (profile.timePreference) completed++;
     if (profile.buddyRolePreference) completed++;
+    if (profile.groupSizePreference) completed++;
 
     return Math.round((completed / total) * 100);
   };
@@ -250,16 +251,24 @@ const ProfileView = ({ user, onSave }) => {
             />
 
             <ChipSelector 
-              label="I am looking for a..."
+              label="I am a..."
               options={BuddyRole}
               selectedValue={profile.buddyRolePreference}
               onSelect={(value) => setProfile({...profile, buddyRolePreference: value})}
               required
             />
+
+            <ChipSelector 
+              label="Preferred Group Size"
+              options={GroupSize}
+              selectedValue={profile.groupSizePreference}
+              onSelect={(value) => setProfile({...profile, groupSizePreference: value})}
+              required
+            />
           </div>
 
           {/* Weekly Availability */}
-          <AvailabilityPicker 
+          <AvailabilityGrid 
             availability={availability}
             onToggleAvailability={toggleAvailability}
           />
