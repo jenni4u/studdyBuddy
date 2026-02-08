@@ -1,14 +1,14 @@
-from pymongo import MongoClient
+from motor.motor_asyncio import AsyncIOMotorClient
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
-# MongoDB connection string
-MONGO_URI = os.getenv("MONGO_URI", "mongodb+srv://admin:adminpw@studybuddy.hilnv62.mongodb.net/")
-DB_NAME = os.getenv("DB_NAME", "studybuddy")
 
-# Create MongoDB client
-client = MongoClient(MONGO_URI)
+MONGO_URI = os.getenv("MONGO_URI")
+DB_NAME = "studybuddy"
 
-# Get database
+client = AsyncIOMotorClient(MONGO_URI)
 db = client[DB_NAME]
+sessions_collection = db.sessions
 
 

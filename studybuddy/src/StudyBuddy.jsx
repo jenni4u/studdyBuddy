@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import axios from "axios";
+
 
 const GOOGLE_CLIENT_ID = '690038744070-3o95qmee1h9mk3aas12st4q36k824m8b.apps.googleusercontent.com';
 const SCOPES = 'https://www.googleapis.com/auth/calendar.events';
@@ -43,6 +45,14 @@ const FALLBACK_PLACES = [
 ];
 
 export default function StudyBuddy() {
+const [sessionType, setSessionType] = useState("online");
+const [visibility, setVisibility] = useState("public");
+const [selectedCourse, setSelectedCourse] = useState("");
+const [note, setNote] = useState("");
+const [whenValue, setWhenValue] = useState("now");
+const [maxSize, setMaxSize] = useState(5);
+const [gender, setGender] = useState("any");
+
   const [modal, setModal] = useState(false);
   const [step, setStep] = useState(1);
   const [sessions, setSessions] = useState([
@@ -70,6 +80,38 @@ export default function StudyBuddy() {
   const [accessToken, setAccessToken] = useState(null);
   const tokenClientRef = useRef(null);
   const placesLoadedRef = useRef(false);
+
+  useEffect(() => {
+  const fetchSessions = async () => {
+    try {
+      const res = await axios.get("http://127.0.0.1:8000/sessions");
+      console.log(res.data); // check what fields come from DB
+
+      const mappedSessions = res.data.map(s => ({
+      id: s._id || Date.now(),
+      course: s.course || "Study",
+      name: s.course || "Study Session", // fallback to course if no name
+      location: s.type === "online" ? "Online" : (s.location?.name || "TBD"),
+      time: s.when === "now" ? "LIVE NOW" : s.when || "TBD",
+      members: s.members || 1,
+      maxMembers: s.max_size || 5,
+      organizer: s.created_by || "Unknown",
+      meetLink: s.meetLink || null,
+      genderPref: s.gender || "any",
+      isLive: s.when === "now"
+    }));
+
+
+      setSessions(mappedSessions);
+
+    } catch (err) {
+      console.error("Error fetching sessions:", err);
+    }
+  };
+
+  fetchSessions();
+}, []);
+
 
   // Load Google Identity Services
   useEffect(() => {
@@ -245,7 +287,39 @@ export default function StudyBuddy() {
     return (R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))).toFixed(1);
   };
 
+  const handleCreateSession = async () => {
+  const courseName = data.courseMode === 'flex'
+    ? 'Flexible'
+    : data.courses.length > 0
+      ? data.courses.map(c => c.code).join(', ')
+      : 'Study';
+
+  const sessionToSave = {
+    type: data.type,
+    visibility: data.visibility,
+    course: courseName,
+    note: data.note || '',
+    when: data.timeMode === 'now'
+      ? 'now'
+      : data.timeMode === 'scheduled'
+        ? `${data.date} ${data.start} - ${data.end}`
+        : 'flexible',
+    max_size: data.maxMembers,
+    gender: data.genderPref,
+    created_by: "Maria"
+  };
+
+  try {
+    await axios.post("http://127.0.0.1:8000/sessions", sessionToSave);
+    alert("Session created successfully!");
+  } catch (error) {
+    console.error("Error creating session:", error);
+  }
+};
+
+
   const createSession = async () => {
+    
     let meetLink = null;
     if (data.type === 'online' && accessToken) meetLink = await createGoogleMeetLink();
     const ns = {
@@ -654,13 +728,23 @@ export default function StudyBuddy() {
                 {step < 6 ? (
                   <button onClick={() => setStep(step+1)} disabled={!canNext()} className={`px-6 py-2 rounded-lg font-medium ${canNext()?'bg-indigo-600 text-white hover:bg-indigo-700':'bg-gray-200 text-gray-400'}`}>Next →</button>
                 ) : (
-                  <button onClick={createSession} className="px-6 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700">✓ Create Session</button>
+                  <button onClick={async () => {
+                    await handleCreateSession();   
+                    await createSession();         
+                    }}
+  className="w-full px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700"
+>
+  Create Session
+</button>
+
+                  
                 )}
               </div>
             )}
             {showMap && (
               <div className="p-6 border-t bg-gray-50 flex justify-between shrink-0">
-                <button onClick={() => { setShowMap(false); setSelectedPlace(null); setShowHoursPanel(false); if(selectedMarkerRef.current){selectedMarkerRef.current.setMap(null);selectedMarkerRef.current=null;} }} className="px-5 py-2 text-gray-700 font-medium rounded-lg hover:bg-gray-200">← Back</button>
+                <button onClick={() => { 
+                  setShowMap(false); setSelectedPlace(null); setShowHoursPanel(false); if(selectedMarkerRef.current){selectedMarkerRef.current.setMap(null);selectedMarkerRef.current=null;} }} className="px-5 py-2 text-gray-700 font-medium rounded-lg hover:bg-gray-200">← Back</button>
                 {selectedPlace && <button onClick={() => selectPlaceFromMap(selectedPlace)} className="px-6 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700">Select Location</button>}
               </div>
             )}
