@@ -1,50 +1,17 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import axios from "axios";
-
-
-const GOOGLE_CLIENT_ID = '690038744070-3o95qmee1h9mk3aas12st4q36k824m8b.apps.googleusercontent.com';
-const SCOPES = 'https://www.googleapis.com/auth/calendar.events';
-const GOOGLE_MAPS_API_KEY = 'AIzaSyBeS7SWjIBiudPOTdrhluEJwhtriQZWOzg';
-
-const ALL_COURSES = [
-  {"code": "ACCT 351", "name": "Intermediate Financial Accounting 1"},
-  {"code": "ACCT 352", "name": "Intermediate Financial Accounting 2"},
-  {"code": "ACCT 361", "name": "Managerial Accounting"},
-  {"code": "COMP 202", "name": "Foundations of Programming"},
-  {"code": "COMP 206", "name": "Introduction to Software Systems"},
-  {"code": "COMP 250", "name": "Introduction to Computer Science"},
-  {"code": "COMP 251", "name": "Algorithms and Data Structures"},
-  {"code": "COMP 273", "name": "Introduction to Computer Systems"},
-  {"code": "ECON 208", "name": "Microeconomic Analysis and Applications"},
-  {"code": "ECON 209", "name": "Macroeconomic Analysis and Applications"},
-  {"code": "MATH 140", "name": "Calculus 1"},
-  {"code": "MATH 141", "name": "Calculus 2"},
-  {"code": "PSYC 100", "name": "Introduction to Psychology 1"},
-  {"code": "BIOL 111", "name": "Principles: Organismal Biology"},
-  {"code": "CHEM 110", "name": "General Chemistry 1"},
-];
-
-// McGill Buildings
-const ALL_BUILDINGS = [
-  {id: 'mclennan', name: 'McLennan-Redpath Library', booking: false},
-  {id: 'schulich', name: 'Schulich Library of Science', booking: false},
-  {id: 'humanities', name: 'Humanities & Social Sciences Library', booking: false},
-  {id: 'trottier', name: 'Trottier Building', booking: true, url: 'https://calendar.google.com/calendar/u/0/appointments/AcZssZ21fWlz5fAbV51y6M5Bkc3t5denCAnFJ6wZQls='},
-];
-
-// Fallback nearby cafés around McGill — sorted closest to farthest
-const FALLBACK_PLACES = [
-  {id:'cafe7',name:'Second Cup – McGill',address:'3475 Rue McTavish, Montréal',rating:4.0,totalRatings:310,lat:45.5052,lng:-73.5770,distance:'0.2',priceLevel:2,openNow:true,busy:'Moderate',hours:['Monday: 6:30 AM – 9:00 PM','Tuesday: 6:30 AM – 9:00 PM','Wednesday: 6:30 AM – 9:00 PM','Thursday: 6:30 AM – 9:00 PM','Friday: 6:30 AM – 9:00 PM','Saturday: 7:30 AM – 8:00 PM','Sunday: 7:30 AM – 8:00 PM']},
-  {id:'cafe6',name:'Arts Café',address:'201 Ave du Président-Kennedy, Montréal',rating:4.2,totalRatings:450,lat:45.5077,lng:-73.5712,distance:'0.5',priceLevel:1,openNow:true,busy:'Busy',hours:['Monday: 7:00 AM – 10:00 PM','Tuesday: 7:00 AM – 10:00 PM','Wednesday: 7:00 AM – 10:00 PM','Thursday: 7:00 AM – 10:00 PM','Friday: 7:00 AM – 10:00 PM','Saturday: 8:00 AM – 10:00 PM','Sunday: 8:00 AM – 10:00 PM']},
-  {id:'cafe5',name:'Pikolo Espresso Bar',address:'3418a Ave du Parc, Montréal',rating:4.5,totalRatings:720,lat:45.5112,lng:-73.5748,distance:'0.8',priceLevel:1,openNow:true,busy:'Quiet',hours:['Monday: 7:00 AM – 7:00 PM','Tuesday: 7:00 AM – 7:00 PM','Wednesday: 7:00 AM – 7:00 PM','Thursday: 7:00 AM – 7:00 PM','Friday: 7:00 AM – 7:00 PM','Saturday: 8:00 AM – 7:00 PM','Sunday: 8:00 AM – 7:00 PM']},
-  {id:'cafe4',name:'Café Myriade',address:'1432 Rue Mackay, Montréal',rating:4.5,totalRatings:1560,lat:45.4973,lng:-73.5778,distance:'0.9',priceLevel:2,openNow:true,busy:'Moderate',hours:['Monday: 7:30 AM – 6:00 PM','Tuesday: 7:30 AM – 6:00 PM','Wednesday: 7:30 AM – 6:00 PM','Thursday: 7:30 AM – 6:00 PM','Friday: 7:30 AM – 6:00 PM','Saturday: 8:30 AM – 6:00 PM','Sunday: 8:30 AM – 6:00 PM']},
-  {id:'cafe8',name:'Café Nocturne',address:'3584 Boul Saint-Laurent, Montréal',rating:4.3,totalRatings:560,lat:45.5150,lng:-73.5680,distance:'1.2',priceLevel:2,openNow:true,busy:'Quiet',hours:['Monday: 8:00 AM – 11:00 PM','Tuesday: 8:00 AM – 11:00 PM','Wednesday: 8:00 AM – 11:00 PM','Thursday: 8:00 AM – 11:00 PM','Friday: 8:00 AM – 11:00 PM','Saturday: 9:00 AM – 12:00 AM','Sunday: 9:00 AM – 10:00 PM']},
-  {id:'cafe2',name:'Crew Collective & Café',address:'360 Rue Saint-Jacques, Montréal',rating:4.4,totalRatings:3120,lat:45.5025,lng:-73.5604,distance:'1.6',priceLevel:2,openNow:true,busy:'Busy',hours:['Monday: 8:00 AM – 5:00 PM','Tuesday: 8:00 AM – 5:00 PM','Wednesday: 8:00 AM – 5:00 PM','Thursday: 8:00 AM – 5:00 PM','Friday: 8:00 AM – 5:00 PM','Saturday: 9:00 AM – 5:00 PM','Sunday: 9:00 AM – 5:00 PM']},
-  {id:'cafe1',name:'Café Olimpico',address:'124 Rue Saint-Viateur O, Montréal',rating:4.5,totalRatings:2840,lat:45.5225,lng:-73.5985,distance:'2.4',priceLevel:2,openNow:true,busy:'Moderate',hours:['Monday: 6:00 AM – 12:00 AM','Tuesday: 6:00 AM – 12:00 AM','Wednesday: 6:00 AM – 12:00 AM','Thursday: 6:00 AM – 12:00 AM','Friday: 6:00 AM – 12:00 AM','Saturday: 6:00 AM – 12:00 AM','Sunday: 6:00 AM – 12:00 AM']},
-  {id:'cafe3',name:'Dispatch Coffee',address:'1000 Rue Bellechasse, Montréal',rating:4.6,totalRatings:890,lat:45.5341,lng:-73.5956,distance:'3.5',priceLevel:2,openNow:true,busy:'Quiet',hours:['Monday: 8:00 AM – 5:00 PM','Tuesday: 8:00 AM – 5:00 PM','Wednesday: 8:00 AM – 5:00 PM','Thursday: 8:00 AM – 5:00 PM','Friday: 8:00 AM – 5:00 PM','Saturday: 9:00 AM – 5:00 PM','Sunday: 9:00 AM – 5:00 PM']},
-];
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import {
+  ALL_BUILDINGS,
+  ALL_COURSES,
+  FALLBACK_PLACES,
+  GOOGLE_CLIENT_ID,
+  GOOGLE_MAPS_API_KEY,
+  SCOPES,
+} from "./constants/studyBuddyData";
+import SessionsSection from "./components/SessionsSection";
+import { createSession, fetchMatchedSessions } from "./services/sessionApi";
 
 export default function StudyBuddy() {
+  const CURRENT_USER_ID = "user_001";
 // const [sessionType, setSessionType] = useState("online");
 // const [visibility, setVisibility] = useState("public");
 // const [selectedCourse, setSelectedCourse] = useState("");
@@ -84,35 +51,39 @@ export default function StudyBuddy() {
   const [showLocationPopup, setShowLocationPopup] = useState(false);
 
   useEffect(() => {
-  const fetchSessions = async () => {
-    try {
-      const res = await axios.get("http://127.0.0.1:8000/sessions");
-      console.log(res.data); // check what fields come from DB
+    const fetchSessions = async () => {
+      try {
+        const data = await fetchMatchedSessions(CURRENT_USER_ID);
 
-      const mappedSessions = res.data.map(s => ({
-      id: s._id || Date.now(),
-      course: s.course || "Study",
-      name: s.course || "Study Session", // fallback to course if no name
-      location: s.type === "online" ? "Online" : (s.location?.name || "TBD"),
-      time: s.when === "now" ? "LIVE NOW" : s.when || "TBD",
-      members: s.members || 1,
-      maxMembers: s.max_size || 5,
-      organizer: s.created_by || "Unknown",
-      meetLink: s.meetLink || null,
-      genderPref: s.gender || "any",
-      isLive: s.when === "now"
-    }));
+        if (data?.error) {
+          console.error("Error fetching matched sessions:", data.error);
+          setSessions([]);
+          return;
+        }
 
+        const rawSessions = Array.isArray(data) ? data : [];
+        const mappedSessions = rawSessions.map((s) => ({
+          id: s._id || Date.now(),
+          course: s.course || "Study",
+          name: s.course || "Study Session", // fallback to course if no name
+          location: s.type === "online" ? "Online" : (s.location?.name || s.location || "TBD"),
+          time: s.when === "now" ? "LIVE NOW" : s.when || "TBD",
+          members: s.members || 1,
+          maxMembers: s.max_size || 5,
+          organizer: s.created_by || "Unknown",
+          meetLink: s.meetLink || null,
+          genderPref: s.gender || "any",
+          isLive: s.when === "now",
+        }));
 
-      setSessions(mappedSessions);
+        setSessions(mappedSessions);
+      } catch (err) {
+        console.error("Error fetching sessions:", err);
+      }
+    };
 
-    } catch (err) {
-      console.error("Error fetching sessions:", err);
-    }
-  };
-
-  fetchSessions();
-}, []);
+    fetchSessions();
+  }, []);
 
 
   // Load Google Identity Services
@@ -294,37 +265,37 @@ export default function StudyBuddy() {
   };
 
   const handleCreateSession = async () => {
-  const courseName = data.courseMode === 'flex'
-    ? 'Flexible'
-    : data.courses.length > 0
-      ? data.courses.map(c => c.code).join(', ')
-      : 'Study';
+    const courseName = data.courseMode === "flex"
+      ? "Flexible"
+      : data.courses.length > 0
+        ? data.courses.map(c => c.code).join(", ")
+        : "Study";
 
-  const sessionToSave = {
-    type: data.type,
-    visibility: data.visibility,
-    course: courseName,
-    note: data.note || '',
-    when: data.timeMode === 'now'
-      ? 'now'
-      : data.timeMode === 'scheduled'
-        ? `${data.date} ${data.start} - ${data.end}`
-        : 'flexible',
-    max_size: data.maxMembers,
-    gender: data.genderPref,
-    created_by: "Maria"
+    const sessionToSave = {
+      type: data.type,
+      visibility: data.visibility,
+      course: courseName,
+      note: data.note || "",
+      when: data.timeMode === "now"
+        ? "now"
+        : data.timeMode === "scheduled"
+          ? `${data.date} ${data.start} - ${data.end}`
+          : "flexible",
+      max_size: data.maxMembers,
+      gender: data.genderPref,
+      created_by: "Maria",
+    };
+
+    try {
+      await createSession(sessionToSave);
+      alert("Session created successfully!");
+    } catch (error) {
+      console.error("Error creating session:", error);
+    }
   };
 
-  try {
-    await axios.post("http://127.0.0.1:8000/sessions", sessionToSave);
-    alert("Session created successfully!");
-  } catch (error) {
-    console.error("Error creating session:", error);
-  }
-};
 
-
-  const createSession = async () => {
+  const createLocalSession = async () => {
     
     let meetLink = null;
     if (data.type === 'online' && accessToken) meetLink = await createGoogleMeetLink();
@@ -381,27 +352,7 @@ export default function StudyBuddy() {
       </div>
 
       {/* Sessions */}
-      <div className="max-w-6xl mx-auto p-6">
-        <h2 className="text-xl font-bold mb-4">Active Sessions</h2>
-        <div className="grid md:grid-cols-2 gap-4">
-          {sessions.map(s => (
-            <div key={s.id} className="bg-white p-6 rounded-xl shadow-md border-2 border-gray-100">
-              <div className="flex justify-between items-start mb-2">
-                <div><span className="text-sm font-semibold text-indigo-600">{s.course}</span><h3 className="font-bold text-lg mt-1">{s.name}</h3></div>
-                {s.isLive && <span className="px-2 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-full">LIVE</span>}
-              </div>
-              <p className="text-sm text-gray-600">📍 {s.location}</p>
-              <p className="text-sm text-gray-600">🕐 {s.time}</p>
-              <p className="text-sm text-gray-600">👥 {s.members}/{s.maxMembers} members</p>
-              {s.genderPref !== 'any' && <p className="text-sm text-gray-600">⚧ {s.genderPref} preferred</p>}
-              <div className="mt-4 pt-4 border-t flex justify-between items-center">
-                <span className="text-sm text-gray-500">by {s.organizer}</span>
-                <button onClick={() => joinSession(s)} className="px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700">{s.meetLink ? 'Join Meet' : 'Join'}</button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      <SessionsSection sessions={sessions} onJoin={joinSession} />
 
       {/* FAB */}
       <button onClick={() => setModal(true)} className="fixed bottom-8 right-8 w-16 h-16 bg-indigo-600 text-white rounded-full shadow-2xl hover:scale-110 transition-transform flex items-center justify-center text-3xl z-50">+</button>
@@ -747,7 +698,7 @@ export default function StudyBuddy() {
                 ) : (
                   <button onClick={async () => {
                     await handleCreateSession();   
-                    await createSession();         
+                    await createLocalSession();         
                     }}
   className="w-full px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700"
 >

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import StudyBuddy from './StudyBuddy';
-import ProfileView from './personalProfile/components/ProfileView';
+import StudyBuddy from './pages/StudyBuddy';
+import ProfileView from './features/profile/components/ProfileView';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('sessions'); // 'sessions' or 'profile'
