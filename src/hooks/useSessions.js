@@ -39,19 +39,17 @@ const mapSession = (session) => {
     name: resolveDisplayName(session, courseLabel),
     location: resolveLocation(session),
     time: resolveWhen(session),
-    members: membersCount,
     maxMembers: session.max_size || session.maxMembers || 5,
-    organizer: session.created_by || session.organizer || "Unknown",
+    organizer: session.created_by || "Unknown",
     meetLink: session.meetLink || null,
-    genderPref: session.gender || session.genderPref || "any",
+    genderPref: session.gender || "any",
     isLive: session.when === "now",
     visibility: session.visibility || null,
     description: session.description || session.note || null,
     style: session.style || null,
-    format: session.format || session.type || null,
+    format: session.format || null,
     timeBlock: session.time || null,
     raw: session,
-    score: session._score ?? null,
   };
 };
 
