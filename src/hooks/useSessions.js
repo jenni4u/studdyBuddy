@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { fetchAllSessions, fetchMatchedSessions, fetchVisibleSessions } from "../services/sessionApi";
+import { fetchAllSessions } from "../services/sessionApi";
 
 const mapSession = (session) => ({
   id: session._id || session.id || Date.now(),
