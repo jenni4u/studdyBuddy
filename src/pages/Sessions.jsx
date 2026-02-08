@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import { GOOGLE_CLIENT_ID, SCOPES } from "../constants/studyBuddyData";
 import HeaderBar from "../components/HeaderBar";
 import SessionsSection from "../components/SessionsSection";
 import CreateSessionModal from "../components/CreateSessionModal";
 import useGoogleAuth from "../hooks/useGoogleAuth";
 import useSessions from "../hooks/useSessions";
-import { createSession } from "../services/sessionApi";
+import { createSession, fetchMatchedSessions } from "../services/sessionApi";
+import axios from "axios";
 
 const CURRENT_USER_ID = "user_001";
 const DEFAULT_SESSIONS = [
@@ -28,7 +29,7 @@ export default function Sessions() {
     GOOGLE_CLIENT_ID,
     SCOPES
   );
-  const { sessions, setSessions } = useSessions(CURRENT_USER_ID, DEFAULT_SESSIONS);
+  const { sessions, setSessions } = useSessions(CURRENT_USER_ID);
 
   const handlePersistSession = async (sessionToSave) => {
     await createSession(sessionToSave);

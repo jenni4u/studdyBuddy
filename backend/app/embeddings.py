@@ -57,6 +57,10 @@ def build_session_embedding_text(session):
     lines.append(f"{session['location']} location")
     if session.get("format"):
         lines.append(f"{session['format']} format")
+    if session.get("gender"):
+        lines.append(f"{session['gender']} gender")
+    if session.get("personality"):
+        lines.append(f"{session['personality']} personality")
     
     # lines.append(session.get("description", ""))
     
@@ -88,10 +92,10 @@ def embed_user_profile(db, user_id):
     )
     return embedding
 
-def embed_study_session(db, session_id):
-    session = db.sessions.find_one({"_id": session_id})
-    if not session:
-        raise ValueError("Study session not found")
+def embed_study_session(db, session):
+    # session = db.sessions.find_one({"_id": session_id})
+    # if not session:
+    #     raise ValueError("Study session not found")
 
     # Build text for Gemini
     text = build_session_embedding_text(session)

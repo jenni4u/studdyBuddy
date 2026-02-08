@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from app.models import Session
+from app.models.session import Session
 from app.database import sessions_collection
 from app.store import sessions_cache
 from app.sessions import router as sessions_router

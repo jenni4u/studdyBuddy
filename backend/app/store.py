@@ -1,5 +1,5 @@
 from typing import List
-from app.models import Session
+from app.models.session import Session
 
 
 sessions_cache: List[Session] = []

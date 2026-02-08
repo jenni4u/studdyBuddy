@@ -1,16 +1,5 @@
 from fastapi import APIRouter
-from app.session import Session
-from app.database import db
-
-router = APIRouter()
-
-@router.post("/sessions")
-async def create_session(session: Session):
-    session_dict = session.dict()
-    result = await db.sessions.insert_one(session_dict)
-    return {"id": str(result.inserted_id)}
-from fastapi import APIRouter
-from app.session import Session
+from app.models.session import Session
 from app.database import db
 from datetime import datetime
 
@@ -38,3 +27,7 @@ async def get_sessions():
         s["_id"] = str(s["_id"]) 
         sessions.append(Session(**s))
     return sessions
+
+@router.get("/sessions/match")
+async def match_sessions(user_id: str, k: int = 20):
+    return

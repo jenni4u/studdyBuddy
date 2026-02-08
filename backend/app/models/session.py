@@ -1,11 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional, List
-
-
-class TimeSlot(BaseModel):
-    day: str
-    start: str
-    end: str
+from app.models.time_slot import TimeSlot
 
 class Session(BaseModel):
     # API-created fields (optional for DB-seeded sessions)
@@ -25,3 +20,4 @@ class Session(BaseModel):
     time: Optional[TimeSlot] = None
     current_members: Optional[List[str]] = None
     group_size_preference: Optional[str] = None
+    embedding: Optional[List[float]] = None
