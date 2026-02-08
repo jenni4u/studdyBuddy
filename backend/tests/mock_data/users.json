@@ -7,7 +7,8 @@
 		"preferences": {
 			"location": "library",
 			"style": "quiet",
-			"time": "morning"
+			"time": "morning",
+			"format": "in-person"
 		},
 		"availability": [
 			{"day": "Mon", "start": "10:00", "end": "12:00"},

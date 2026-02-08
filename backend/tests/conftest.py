@@ -35,10 +35,11 @@ def _load_json(filename):
 def mongo_db():
     mongo_uri = os.environ.get("MONGODB_URI", "mongodb://localhost:27017")
     client = MongoClient(mongo_uri)
-    db = client["studybuddy_test"]
+    db = client["studybuddy"]
+    db.sessions.delete_many({})
+    db.users.delete_many({})
     yield db
-    client.drop_database("studybuddy_test")
-
+    
 
 @pytest.fixture(scope="session")
 def seed_db(mongo_db):

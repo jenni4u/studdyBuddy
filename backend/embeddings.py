@@ -1,7 +1,8 @@
 import os
 from pathlib import Path
+from urllib import response
 
-import google.generativeai as genai
+from google import generativeai as genai
 
 ENV_PATH = Path(__file__).resolve().parent / ".env"
 
@@ -27,7 +28,7 @@ api_key = os.environ.get("GEMINI_API_KEY")
 if not api_key:
     raise ValueError("GEMINI_API_KEY is not set")
 genai.configure(api_key=api_key)
-embedding_model = genai.GenerativeModel("embedding-001")
+
 
 def build_user_embedding_text(user: dict) -> str:
     prefs = user.get("preferences", {})
@@ -48,16 +49,25 @@ def build_user_embedding_text(user: dict) -> str:
     return prefs_text
 
 def build_session_embedding_text(session):
-    lines = [
-        f"{session['location']} location",
-        f"{session.get('style', 'quiet')} style",
-        f"{session.get('format', 'in-person')} format",
-        f"{session.get('description', '')}"
-    ]
-    return "\n".join(lines)
+    
+    lines = []
+
+    if session.get("style"):
+        lines.append(f"{session['style']} style")
+    lines.append(f"{session['location']} location")
+    if session.get("format"):
+        lines.append(f"{session['format']} format")
+    
+    # lines.append(session.get("description", ""))
+    
+    return ", ".join(lines)
 
 def generate_embedding(text: str):
-    result = embedding_model.embed_content(text)
+    result = genai.embed_content(
+        model="gemini-embedding-001",
+        content=text,
+        task_type="retrieval_document"
+    )
     return result["embedding"]
 
 def save_user_embedding(db, user_id, embedding):
@@ -83,20 +93,22 @@ def embed_user_profile(db, user_id):
     return embedding
 
 def embed_study_session(db, session_id):
-    session = db.study_sessions.find_one({"_id": session_id})
+    session = db.sessions.find_one({"_id": session_id})
     if not session:
         raise ValueError("Study session not found")
 
     # Build text for Gemini
     text = build_session_embedding_text(session)
-
+    
     # Generate embedding
     embedding = generate_embedding(text)
+    
 
     # Save to MongoDB
-    db.study_sessions.update_one(
+    result = db.sessions.update_one(
         {"_id": session_id},
         {"$set": {"embedding": embedding}}
     )
 
+    print("update result:", result.modified_count)
     return embedding

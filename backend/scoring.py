@@ -1,7 +1,7 @@
 import os
 from backend import embeddings
 
-VECTOR_INDEX = os.environ.get("VECTOR_INDEX", "user-session")
+VECTOR_INDEX = os.environ.get("VECTOR_INDEX", "vector_index")
 
 def filter(user, session):
     # Session must have space
@@ -136,9 +136,10 @@ def get_similar_sessions(db, user, k=20):
     pipeline = [
         {
             "$vectorSearch": {
-                "vector": user_embedding,
+                "queryVector": user_embedding,
                 "path": "embedding",
-                "k": k,
+                "numCandidates": max(k * 5, 50),
+                "limit": k,
                 "index": VECTOR_INDEX
             }
         }
