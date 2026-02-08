@@ -70,12 +70,6 @@ def generate_embedding(text: str):
     )
     return result["embedding"]
 
-def save_user_embedding(db, user_id, embedding):
-    db.users.update_one(
-        {"_id": user_id},
-        {"$set": {"embedding": embedding}}
-    )
-
 def embed_user_profile(db, user_id):
     user = db.users.find_one({"_id": user_id})
     if not user:
@@ -88,8 +82,10 @@ def embed_user_profile(db, user_id):
     embedding = generate_embedding(text)
 
     # Save to MongoDB
-    save_user_embedding(db, user_id, embedding)
-
+    db.users.update_one(
+        {"_id": user_id},
+        {"$set": {"embedding": embedding}}
+    )
     return embedding
 
 def embed_study_session(db, session_id):
@@ -103,12 +99,9 @@ def embed_study_session(db, session_id):
     # Generate embedding
     embedding = generate_embedding(text)
     
-
     # Save to MongoDB
     result = db.sessions.update_one(
         {"_id": session_id},
         {"$set": {"embedding": embedding}}
     )
-
-    print("update result:", result.modified_count)
     return embedding

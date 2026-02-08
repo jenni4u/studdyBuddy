@@ -147,6 +147,23 @@ def get_similar_sessions(db, user, k=20):
 
     return list(db.sessions.aggregate(pipeline))
 
+def get_similar_users(db, user, k=20):
+    user_embedding = embeddings.embed_user_profile(db, user["_id"])
+    
+    pipeline = [
+        {
+            "$vectorSearch": {
+                "queryVector": user_embedding,
+                "path": "embedding",
+                "numCandidates": max(k * 5, 50),
+                "limit": k,
+                "index": "users"
+            }
+        }
+    ]
+
+    return list(db.users.aggregate(pipeline))
+
 def match_user(db, user):
     # Step 1: get vector-similar sessions (compares in embedded)
     sessions = get_similar_sessions(db, user, k=20)
