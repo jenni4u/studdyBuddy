@@ -2,12 +2,22 @@ import axios from "axios";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://127.0.0.1:8000";
 
-export const fetchMatchedSessions = async (userId, k = 20) => {
-  const response = await axios.post(`${API_BASE_URL}/sessions/match?k=${k}`, {
-    user_id: userId,
-  });
-
+export const fetchAllSessions = async () => {
+  const response = await axios.get(`${API_BASE_URL}/sessions`);
   return response.data;
+};
+
+export const fetchMatchedSessions = async (userId, k = 20) => {
+  // Fallback to fetching all sessions if match endpoint doesn't exist
+  try {
+    const response = await axios.post(`${API_BASE_URL}/sessions/match?k=${k}`, {
+      user_id: userId,
+    });
+    return response.data;
+  } catch (err) {
+    // Fallback to all sessions
+    return fetchAllSessions();
+  }
 };
 
 export const createSession = async (session) => {
@@ -16,8 +26,14 @@ export const createSession = async (session) => {
 };
 
 export const fetchVisibleSessions = async (userId) => {
-  const response = await axios.get(`${API_BASE_URL}/sessions/visible/${userId}`);
-  return response.data;
+  // Fallback to fetching all sessions if visible endpoint doesn't exist
+  try {
+    const response = await axios.get(`${API_BASE_URL}/sessions/visible/${userId}`);
+    return response.data;
+  } catch (err) {
+    // Fallback to all sessions
+    return fetchAllSessions();
+  }
 };
 
 // ==================== USER API ====================

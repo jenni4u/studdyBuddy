@@ -27,10 +27,12 @@ export default function Sessions({ userId = "user_001" }) {
     SCOPES
   );
   // Use visibility filter to show only public sessions + friends-only sessions from friends
-  const { sessions, setSessions } = useSessions(userId, DEFAULT_SESSIONS, true);
+  const { sessions, setSessions, refreshSessions } = useSessions(userId, DEFAULT_SESSIONS, true);
 
   const handlePersistSession = async (sessionToSave) => {
     await createSession(sessionToSave);
+    // Refresh sessions from backend after creating
+    await refreshSessions();
   };
 
   const handleSessionCreated = (session) => {

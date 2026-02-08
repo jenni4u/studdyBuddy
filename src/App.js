@@ -1,22 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sessions from './pages/Sessions';
 import Login from './loginPage/Login';
 import ProfileView from './features/profile/components/ProfileView';
 import FriendsPanel from './components/FriendsPanel';
 
 function App() {
-  const [currentUser, setCurrentUser] = useState(null);
+  // Initialize user from localStorage if available
+  const [currentUser, setCurrentUser] = useState(() => {
+    const savedUser = localStorage.getItem('studybuddy_user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
   const [currentPage, setCurrentPage] = useState('sessions'); // 'sessions' or 'profile'
   const [showFriendsPanel, setShowFriendsPanel] = useState(false);
 
   // Handle login
   const handleLogin = (user) => {
+    localStorage.setItem('studybuddy_user', JSON.stringify(user));
     setCurrentUser(user);
     setCurrentPage('sessions');
   };
 
   // Handle logout
   const handleLogout = () => {
+    localStorage.removeItem('studybuddy_user');
     setCurrentUser(null);
     setCurrentPage('sessions');
   };

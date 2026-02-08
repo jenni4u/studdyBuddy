@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
-import { fetchMatchedSessions, fetchVisibleSessions } from "../services/sessionApi";
+import { fetchAllSessions, fetchMatchedSessions, fetchVisibleSessions } from "../services/sessionApi";
 
 const mapSession = (session) => ({
-  id: session._id || Date.now(),
+  id: session._id || session.id || Date.now(),
   course: session.course || "Study",
   name: session.course || "Study Session",
   location: session.type === "online"
@@ -21,30 +21,30 @@ const mapSession = (session) => ({
 export default function useSessions(userId, initialSessions = [], useVisibilityFilter = false) {
   const [sessions, setSessions] = useState(initialSessions);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const refreshSessions = useCallback(async () => {
-    if (!userId) return;
+    setLoading(true);
     try {
-      // Use visibility-filtered endpoint when friends feature is needed
-      const data = useVisibilityFilter 
-        ? await fetchVisibleSessions(userId)
-        : await fetchMatchedSessions(userId);
-      if (data?.error) {
-        setError(data.error);
-        setSessions([]);
-        return;
-      }
+      // Try to fetch all sessions from backend
+      const data = await fetchAllSessions();
       const rawSessions = Array.isArray(data) ? data : [];
-      setSessions(rawSessions.map(mapSession));
+      if (rawSessions.length > 0) {
+        setSessions(rawSessions.map(mapSession));
+      }
       setError(null);
     } catch (err) {
+      console.error("Error fetching sessions:", err);
       setError(err);
+      // Keep initial sessions if backend fails
+    } finally {
+      setLoading(false);
     }
-  }, [userId, useVisibilityFilter]);
+  }, []);
 
   useEffect(() => {
     refreshSessions();
   }, [refreshSessions]);
 
-  return { sessions, setSessions, refreshSessions, error };
+  return { sessions, setSessions, refreshSessions, error, loading };
 }

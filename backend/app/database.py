@@ -10,6 +10,5 @@ DB_NAME = "studybuddy"
 client = AsyncIOMotorClient(MONGO_URI)
 db = client[DB_NAME]
 sessions_collection = db.sessions
-users_collection = db.users
 
 
