@@ -65,11 +65,19 @@ export default function useGoogleAuth(clientId, scopes) {
         }
       );
       const data = await response.json();
+      if (data.error) {
+        console.error("Google Calendar API error:", data.error);
+        return null;
+      }
       const entryPoint = data.conferenceData?.entryPoints?.find(
         (entry) => entry.entryPointType === "video"
       );
+      if (!entryPoint) {
+        console.error("No Meet link in response:", data);
+      }
       return entryPoint ? entryPoint.uri : null;
-    } catch {
+    } catch (error) {
+      console.error("Failed to create Google Meet link:", error);
       return null;
     }
   }, [accessToken]);

@@ -400,8 +400,13 @@ export default function CreateSessionModal({
     }
 
     let meetLink = null;
+    console.log("Creating session - type:", data.type, "accessToken:", !!accessToken, "createGoogleMeetLink:", !!createGoogleMeetLink);
     if (data.type === "online" && accessToken && createGoogleMeetLink) {
+      console.log("Attempting to create Google Meet link...");
       meetLink = await createGoogleMeetLink();
+      console.log("Meet link result:", meetLink);
+    } else if (data.type === "online" && !accessToken) {
+      console.log("No accessToken - user not signed in with Google");
     }
 
     const localSession = {

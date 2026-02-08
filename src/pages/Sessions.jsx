@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { GOOGLE_CLIENT_ID, SCOPES } from "../constants/studyBuddyData";
-import HeaderBar from "../components/HeaderBar";
 import SessionsSection from "../components/SessionsSection";
 import CreateSessionModal from "../components/CreateSessionModal";
 import useGoogleAuth from "../hooks/useGoogleAuth";
@@ -48,8 +47,6 @@ export default function Sessions() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50">
-      <HeaderBar googleUser={googleUser} onSignIn={signInWithGoogle} />
-
       <SessionsSection sessions={sessions} onJoin={joinSession} />
 
       <button
