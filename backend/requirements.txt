@@ -1,0 +1,7 @@
+google-generativeai
+pymongo
+pytest
+fastapi
+uvicorn
+motor
+dotenv
